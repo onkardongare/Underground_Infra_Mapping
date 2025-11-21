@@ -16,12 +16,27 @@
     "plugins": [
       {
         "name": "next"
-      }
+      },
     ],
+      
+    "baseUrl": "./",
+
     "paths": {
-      "@/*": ["./*"]
+      
+      "@/*": ["./*"],
+
+      "@store/*": ["store/*"],
+
+      "@slices/*": ["store/slices/*"],
+
+      "@components/*": ["components/*"],
+
+      "@hooks/*": ["hooks/*"],
+
+      "@utils/*": ["utils/*"]
     }
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
