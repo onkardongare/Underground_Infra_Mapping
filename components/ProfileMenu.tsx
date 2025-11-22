@@ -3,6 +3,8 @@
 import { use, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@hooks/useAppDispatch";
+import { useAppSelector } from "@hooks/useAppSelector";
 
 interface ProfileMenuProps {
   isOpen: boolean;
@@ -21,6 +23,8 @@ export default function ProfileMenu({
 }: ProfileMenuProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((s) => s.auth);
 
   // Hide when clicking outside
   useEffect(() => {
@@ -61,13 +65,13 @@ export default function ProfileMenu({
         </button>
       </div>
 
-      {isLoggedIn ? (
+      {user ? (
         <>
-          <h3 className="text-lg font-semibold text-slate-800">
+          {/* <h3 className="text-lg font-semibold text-slate-800">
             Your Profile
-          </h3>
-          <p className="text-sm text-slate-600">Name: {userName}</p>
-          <p className="text-sm text-slate-600">Email: {email}</p>
+          </h3> */}
+          <p className="text-sm text-slate-600">Name: {user.name}</p>
+          <p className="text-sm text-slate-600">Email: {user.email}</p>
 
           <button
             className="
@@ -90,7 +94,7 @@ export default function ProfileMenu({
         </>
       ) : (
         <>
-          <h3 className="text-lg font-semibold text-slate-800">Welcome</h3>
+          {/* <h3 className="text-lg font-semibold text-slate-800">Welcome</h3> */}
           <p className="text-sm text-slate-600">
             Sign in to save your maps & preferences.
           </p>

@@ -1,7 +1,7 @@
 // app/auth/signup/page.tsx
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@hooks/useAppDispatch";
 import { useAppSelector } from "@hooks/useAppSelector";
@@ -80,9 +80,11 @@ export default function SignupPage() {
     }
   };
 
-  if (user) {
-    router.push("/");
-  }
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50">

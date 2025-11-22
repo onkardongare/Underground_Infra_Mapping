@@ -1,4 +1,5 @@
 // store/slices/authSlice.ts
+import { apiRequest, getAuthToken, setAuthToken } from "@/lib/api";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@store/index";
 
@@ -44,57 +45,82 @@ interface SignupPayload {
   role: UserRole;
   location: LocationInfo;
 }
+interface AuthResponse {
+  user: AuthUser;
+  token: string;
+}
 
 export const loginUser = createAsyncThunk<
   AuthUser,
   LoginPayload,
-  { state: RootState }
->("auth/loginUser", async ({ email, password }, thunkAPI) => {
-  // TODO: Replace with real API call
-  await new Promise((res) => setTimeout(res, 800));
+  { rejectValue: string }
+>("auth/loginUser", async (payload, thunkAPI) => {
+  try {
+    const data = await apiRequest<AuthResponse>("/auth/login", {
+      method: "POST",
+      body: payload,
+    });
 
-  if (!email || !password) {
-    return thunkAPI.rejectWithValue("Email and password are required");
+    setAuthToken(data.token);
+    return data.user;
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(err.message ?? "Login failed");
   }
-
-  // Fake user for now
-  const fakeUser: AuthUser = {
-    id: "1",
-    name: "Demo User",
-    email,
-    role: "citizen",
-  };
-
-  return fakeUser;
 });
+
 
 export const signupUser = createAsyncThunk<
   AuthUser,
   SignupPayload,
-  { state: RootState }
->("auth/signupUser", async (data, thunkAPI) => {
-  // TODO: Replace with real API call
-  await new Promise((res) => setTimeout(res, 1000));
+  { rejectValue: string }
+>("auth/signupUser", async (payload, thunkAPI) => {
+  try {
+    const data = await apiRequest<AuthResponse>("/auth/signup", {
+      method: "POST",
+      body: payload,
+    });
 
-  if (!data.email || !data.password || !data.name) {
-    return thunkAPI.rejectWithValue("All fields are required");
+    setAuthToken(data.token);
+    return data.user;
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(err.message ?? "Signup failed");
   }
-
-  const newUser: AuthUser = {
-    id: "2",
-    name: data.name,
-    email: data.email,
-    role: data.role,
-    location: data.location,
-  };
-
-  return newUser;
 });
 
-export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
-  // TODO: call logout endpoint if needed
-  await new Promise((res) => setTimeout(res, 500));
+export const logoutUser = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>("auth/logoutUser", async (_, thunkAPI) => {
+  try {
+    await apiRequest<{ success: boolean }>("/auth/logout", {
+      method: "POST",
+      auth: true, // ✅ token auto-added
+    });
+  } catch (err: any) {
+    // ignore if backend fails, we still clear token
+  } finally {
+    setAuthToken(null);
+  }
 });
+
+export const fetchCurrentUser = createAsyncThunk<
+  AuthUser,
+  void,
+  { rejectValue: string }
+>("auth/fetchCurrentUser", async (_, thunkAPI) => {
+  try {
+    const data = await apiRequest<{ user: AuthUser }>("/auth/me", {
+      method: "GET",
+      auth: true, // ✅ auto attach token
+    });
+
+    return data.user;
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(err.message ?? "Failed to fetch user");
+  }
+});
+
 
 // ---------- Slice ----------
 
