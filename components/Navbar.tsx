@@ -11,9 +11,6 @@ interface NavbarProps {
 export default function Navbar({ onMenuClick }: NavbarProps) {
   const [openProfile, setOpenProfile] = useState(false);
 
-  // Fake auth for now
-  const isLoggedIn = false;
-
   return (
     <div className="relative w-full px-2 py-2 z-20 flex items-center justify-between">
       
@@ -67,9 +64,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       <ProfileMenu
         isOpen={openProfile}
         onClose={() => setOpenProfile(false)}
-        isLoggedIn={isLoggedIn}
-        userName="Onkar"
-        email="user@example.com"
       />
     </div>
   );

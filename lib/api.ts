@@ -31,8 +31,11 @@ export async function apiRequest<T>(
   const { method = "GET", body, auth = false } = options;
 
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
   };
+  
+  if (options.body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
 
   // 🔐 Automatically attach token if auth=true
   if (auth) {
@@ -58,6 +61,13 @@ export async function apiRequest<T>(
       // ignore parse errors
     }
     throw new Error(message);
+  }
+  // If status is 204, return undefined or an empty object,
+  // as the response has no body to parse.
+  if (res.status === 204) {
+    // We cast to T, assuming T is 'void' or an optional type in this case.
+    // For deleteProject, the expected T is 'void' so this is safe.
+    return undefined as unknown as T; 
   }
 
   return (await res.json()) as T;

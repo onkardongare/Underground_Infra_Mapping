@@ -34,9 +34,11 @@ const mapSlice = createSlice({
   reducers: {
     setViewState(state, action: PayloadAction<ViewState>) {
       state.viewState = action.payload;
+      console.log(state.viewState);
     },
     setSelectedLayers(state, action: PayloadAction<MapLayer[]>) {
       state.selectedLayers = action.payload;
+      console.log(state.selectedLayers);
     },
     toggleLayer(state, action: PayloadAction<MapLayer>) {
       const layer = action.payload;

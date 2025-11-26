@@ -23,12 +23,14 @@ interface AuthState {
   user: AuthUser | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  initialized: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   status: "idle",
   error: null,
+  initialized: false,
 };
 
 // ---------- Thunks (fake API for now) ----------
@@ -128,9 +130,12 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    markAuthInitialized(state) {
+      state.initialized = true;
+    },
     clearAuthError(state) {
       state.error = null;
-    },
+    }
   },
   extraReducers: (builder) => {
     // login
@@ -142,10 +147,12 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action: PayloadAction<AuthUser>) => {
         state.status = "succeeded";
         state.user = action.payload;
+        state.initialized = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = (action.payload as string) ?? "Login failed";
+        state.initialized = true;
       });
 
     // signup
@@ -159,11 +166,13 @@ const authSlice = createSlice({
         (state, action: PayloadAction<AuthUser>) => {
           state.status = "succeeded";
           state.user = action.payload;
+          state.initialized = true;
         }
       )
       .addCase(signupUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = (action.payload as string) ?? "Signup failed";
+        state.initialized = true;
       });
 
     // logout
@@ -175,12 +184,38 @@ const authSlice = createSlice({
         state.status = "idle";
         state.user = null;
         state.error = null;
+        state.initialized = true;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.status = "failed";
       });
+
+    // fetchCurrentUser
+    builder
+      .addCase(fetchCurrentUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        fetchCurrentUser.fulfilled,
+        (state, action: PayloadAction<AuthUser>) => {
+          state.user = action.payload;
+          state.status = "succeeded";
+          state.initialized = true;
+        }
+      )
+      .addCase(fetchCurrentUser.rejected, (state) => {
+        state.user = null;
+        state.status = "failed";
+        state.initialized = true; // even if failed, we know there is no logged-in user
+      });
   },
 });
 
-export const { clearAuthError } = authSlice.actions;
+
 export default authSlice.reducer;
+export const { markAuthInitialized, clearAuthError } = authSlice.actions;
+
+export const selectAuthUser = (state: RootState) => state.auth.user;
+export const selectAuthInitialized = (state: RootState) =>
+  state.auth.initialized;
+

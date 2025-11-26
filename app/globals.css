@@ -1,4 +1,5 @@
 @import "tailwindcss";
+/* @import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css"; */
 
 @theme {
   /* example custom color; from here you can do bg-brand, text-brand, etc. */
