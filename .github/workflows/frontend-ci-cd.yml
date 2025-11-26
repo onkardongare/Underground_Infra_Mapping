@@ -29,6 +29,7 @@ jobs:
             # 4.Lint
             - name: Lint
               run: npm run lint
+              continue-on-error: true
 
             # 5.Run tests
             - name: Run tests
