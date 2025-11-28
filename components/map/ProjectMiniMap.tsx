@@ -24,7 +24,9 @@ export default function ProjectMiniMap({ project }: ProjectMiniMapProps) {
 
     const m = new maplibregl.Map({
       container: containerRef.current,
-      style: "https://demotiles.maplibre.org/style.json",
+      style: "https://tiles.openfreemap.org/styles/liberty",
+      // style: "https://tiles.openfreemap.org/styles/positron",
+      // style: "https://tiles.openfreemap.org/styles/bright",
       center: [78.9629, 20.5937], // fallback: India center
       zoom: 4,
       attributionControl: false,

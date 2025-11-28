@@ -43,10 +43,9 @@ export default function ProjectMap() {
 
     const m = new maplibregl.Map({
       container: mapContainer.current,
-      // style: "https://tiles.openfreemap.org/styles/liberty",
+      style: "https://tiles.openfreemap.org/styles/liberty",
       // style: "https://tiles.openfreemap.org/styles/positron",
-      style: "https://tiles.openfreemap.org/styles/bright",
-      // style: "https://tiles.openfreemap.org/styles/3d",
+      // style: "https://tiles.openfreemap.org/styles/bright",
 
       center: [viewState.lng, viewState.lat],
       zoom: viewState.zoom,
